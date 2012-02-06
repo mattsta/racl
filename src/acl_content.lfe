@@ -7,8 +7,8 @@
 ; think of "owner can (delete can (merge can (write can 
 ;           (copy can (append can (read))))))"
 
-(defacl acl_content
- redis_acl_content
- ((owner delete merge write copy append downvote upvote flag read))
- ((export all))
- ())
+(defacl acl_content  ; module name
+ redis_acl_content   ; registered name of an er_pool to talk to redis
+ ((owner delete merge write copy append downvote upvote flag read)) ; levels
+ ((export all)) ; module stuff
+ ()) ; additional functions you may want to bundle with your module
