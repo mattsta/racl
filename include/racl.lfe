@@ -71,15 +71,15 @@
 
 (defsyntax allowed 
  ([redis-server permission-name key]
-  (: er_server smembers redis-server (mk-allow-key key permission-name))))
+  (: er smembers redis-server (mk-allow-key key permission-name))))
 
 (defsyntax denied 
  ([redis-server permission-name key]
-  (: er_server smembers redis-server (mk-deny-key key permission-name))))
+  (: er smembers redis-server (mk-deny-key key permission-name))))
 
 (defsyntax check-permission 
  ([redis-server permission-name allow-deny key requestor-id]
-  (: er_server sismember redis-server (mk-key key allow-deny permission-name) requestor-id)))
+  (: er sismember redis-server (mk-key key allow-deny permission-name) requestor-id)))
 
 (defsyntax allow? 
  ([redis-server permission-name key id]
@@ -99,14 +99,14 @@
 (defsyntax allow
  ([redis-server permission-name key id]
   (progn
-   (: er_server srem redis-server (mk-deny-key key permission-name) id)
-   (: er_server sadd redis-server (mk-allow-key key permission-name) id))))
+   (: er srem redis-server (mk-deny-key key permission-name) id)
+   (: er sadd redis-server (mk-allow-key key permission-name) id))))
 
 (defsyntax deny
  ([redis-server permission-name key id]
   (progn
-   (: er_server srem redis-server (mk-allow-key key permission-name) id)
-   (: er_server sadd redis-server (mk-deny-key key permission-name) id))))
+   (: er srem redis-server (mk-allow-key key permission-name) id)
+   (: er sadd redis-server (mk-deny-key key permission-name) id))))
 
 (defmacro defacl
  ([name properties modifiers custom-funs]
