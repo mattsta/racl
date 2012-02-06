@@ -1,13 +1,12 @@
 {application, racl,
  [
   {description, "racl - Redis Acess Control Lists"},
-  {vsn, "0.0.1"},
+  {vsn, "0.3"},
   {modules, []},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib
                  ]},
-  {mod, { racl_app, []}},
   {env, []}
  ]}.

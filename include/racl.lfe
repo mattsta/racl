@@ -109,7 +109,7 @@
 (defmacro defacl
  ([name properties modifiers custom-funs]
   (let* ((acl-funs (generate-acl-funs properties)))
-   (: io format '"Found acl-funs: ~p~n~n" (list acl-funs))
+;   (: io format '"Found acl-funs: ~p~n~n" (list acl-funs))
    `(progn
      (defmodule ,name ,@modifiers)
       ,@acl-funs
