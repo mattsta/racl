@@ -19,9 +19,8 @@ racl_basic_commands_test_() ->
     fun redis_setup_clean/0,
     fun(C) -> 
       [
-        % Test access with no permission and default throw behavior
-        ?_assertThrow({acl_deny,read,<<"bob">>,<<"12">>},
-          acl_content:read(C, <<"bob">>, <<"12">>)),
+        % Test access with no permission
+        ?_E(false, acl_content:read(C, <<"bob">>, <<"12">>)),
         % Add user
         ?_E(true,  acl_content:allow_read(C, <<"bob">>, <<"12">>)),
         % Test permission
@@ -35,8 +34,7 @@ racl_basic_commands_test_() ->
         % Check user was removed from allowed
         ?_E([], acl_content:allowed_read(C, <<"bob">>)),
         % Test permission again
-        ?_assertThrow({acl_deny,read,<<"bob">>,<<"12">>},
-          acl_content:read(C, <<"bob">>, <<"12">>))
+        ?_E(false, acl_content:read(C, <<"bob">>, <<"12">>))
       ]
     end
   }.

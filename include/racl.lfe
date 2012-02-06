@@ -86,8 +86,7 @@
   (check-permission redis-server permission-name 'allow key id)))
 
 (defsyntax read-denied-error
- ([permission key id]
-  (throw (tuple 'acl_deny permission key id))))
+ ([permission key id] 'false))
 
 (defsyntax deny?
  ([redis-server permission-name key id]
