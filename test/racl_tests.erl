@@ -7,11 +7,11 @@
 redis_setup_clean() ->
   Cxn = 
   case whereis(racl) of
-    undefined -> {ok, C} = er_server:start_link(racl, "127.0.0.1", 9961),
+    undefined -> {ok, C} = er_pool:start_link(racl, "127.0.0.1", 9961),
                  C;
         Found -> Found
   end,
-  ok = er_server:flushall(Cxn),
+  ok = er:flushall(Cxn),
   Cxn.
 
 racl_basic_commands_test_() ->
