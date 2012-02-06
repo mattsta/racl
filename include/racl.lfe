@@ -63,13 +63,9 @@
     properties))
 )
 
-(defsyntax a2b
- ([name]
-  (atom_to_binary name 'utf8)))
-
 (defsyntax mk-key
  ([base allow-deny permission-type]
-  (: lists flatten (: io_lib format '"~s~s~s~s~s" (list base #b("::perm_") permission-type #b("_") allow-deny)))))
+  (: eru er_key 'permission permission-type base allow-deny)))
 
 (defsyntax mk-allow-key
  ([base type]
