@@ -24,3 +24,8 @@ How to use
        - Enable UserIdToAllow 'flag' access on RedisKey
      - acl_forum:deny_flag(ErServerName, RedisKey, UserIdToDeny)
        - Deny UserIdToDeny 'flag' access on RedisKey
+
+Testing
+=======
+
+    rebar eunit skip_deps=true
