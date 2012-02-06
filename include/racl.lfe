@@ -6,20 +6,14 @@
    ((c) (when (is_atom c)) c)
    ((c) (when (is_binary c)) (a (binary_to_list c))))
 
- (defun mk-a (c d)
-   (a (: lists flatten (cons (l c) (l d)))))
-
  ; turn anything reasonable into a list
  (defun l
    ((c) (when (is_list c)) c)
    ((c) (when (is_atom c)) (atom_to_list c))
    ((c) (when (is_binary c)) (binary_to_list c)))
 
- ; turn anything reasonable into a binary
- (defun b
-   ((c) (when (is_list c)) (list_to_binary c))
-   ((c) (when (is_atom c)) (b (atom_to_list c)))
-   ((c) (when (is_binary c)) c))
+ (defun mk-a (c d)
+   (a (: lists flatten (cons (l c) (l d)))))
 
   (defun sub-acls-to-allows (acls)
    (lc ((<- acl acls)) `(allow? redis-server ',acl key id)))
