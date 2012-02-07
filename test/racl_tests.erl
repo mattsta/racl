@@ -17,13 +17,13 @@ racl_basic_commands_test_() ->
         % Test access with no permission
         ?_E(false, acl_content:read(<<"bob">>, <<"12">>)),
         % Add user
-        ?_E(true,  acl_content:allow_read(<<"bob">>, <<"12">>)),
+        ?_E(true,  acl_content:add_read(<<"bob">>, <<"12">>)),
         % Test permission
         ?_E(true,  acl_content:read(<<"bob">>, <<"12">>)),
         % Check allowed users
         ?_E([<<"12">>], acl_content:allowed_read(<<"bob">>)),
         % Remove user
-        ?_E(true,  acl_content:deny_read(<<"bob">>, <<"12">>)),
+        ?_E(true,  acl_content:remove_read(<<"bob">>, <<"12">>)),
         % Check denied users
         ?_E([<<"12">>], acl_content:denied_read(<<"bob">>)),
         % Check user was removed from allowed

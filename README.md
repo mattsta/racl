@@ -20,9 +20,9 @@ How to use
        - Returns a list of user ids granted 'flag' access
      - acl_forum:denied_flag(ErServerName, RedisKey)
        - Returns a list of user ids denied 'flag' access
-     - acl_forum:allow_flag(ErServerName, RedisKey, UserIdToAllow)
+     - acl_forum:add_flag(ErServerName, RedisKey, UserIdToAllow)
        - Enable UserIdToAllow 'flag' access on RedisKey
-     - acl_forum:deny_flag(ErServerName, RedisKey, UserIdToDeny)
+     - acl_forum:remove_flag(ErServerName, RedisKey, UserIdToDeny)
        - Deny UserIdToDeny 'flag' access on RedisKey
 
 Testing

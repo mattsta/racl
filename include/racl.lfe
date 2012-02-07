@@ -19,8 +19,8 @@
 
  (defun acl-funs
   ([redis-server (acl-name . sub-acls)]
-   (let* ((allow-fun-name (mk-a 'allow_ acl-name))
-          (deny-fun-name (mk-a 'deny_ acl-name))
+   (let* ((allow-fun-name (mk-a 'add_ acl-name))
+          (deny-fun-name (mk-a 'remove_ acl-name))
           (sub-acls (sub-acls-to-allows redis-server (cons acl-name sub-acls)))
           (get-allowed-fun-name (mk-a 'allowed_ acl-name))
           (get-denied-fun-name (mk-a 'denied_ acl-name)))
