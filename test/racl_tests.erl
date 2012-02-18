@@ -21,6 +21,8 @@ racl_basic_commands_test_() ->
         % Test permission
         ?_E(true,  acl_content:read(<<"bob">>, <<"12">>)),
         % Check allowed users
+        ?_E([<<"12">>], acl_content:is_read(<<"bob">>)),
+        % Check allowed users
         ?_E([<<"12">>], acl_content:allowed_read(<<"bob">>)),
         % Remove user
         ?_E(true,  acl_content:remove_read(<<"bob">>, <<"12">>)),

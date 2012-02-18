@@ -16,6 +16,8 @@ How to use
      - acl_forum:flag(ErServerName, RedisKey, IdOfUserForRequestedAccess)
        - Verifies the IdOfUserForRequestedAccess is authorized for the
          'flag' property of RedisKey
+     - acl_forum:is_flag(ErServerName, RedisKey)
+       - Returns a list of user ids granted 'flag' access
      - acl_forum:allowed_flag(ErServerName, RedisKey)
        - Returns a list of user ids granted 'flag' access
      - acl_forum:denied_flag(ErServerName, RedisKey)
