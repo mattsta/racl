@@ -14,105 +14,109 @@
  (defun mk-a (c d)
   (a (: lists flatten (cons (l c) (l d)))))
 
- (defun sub-acls-to-allows (redis-server acls)
-  (lc ((<- acl acls)) `(allow? ',redis-server ',acl key id)))
+ (defun sub-acls-to-allows (redis-server full-name acls)
+  (lc ((<- acl acls)) `(allow? ',redis-server ',acl ',full-name key id)))
 
  (defun acl-funs
-  ([redis-server (acl-name . sub-acls)]
+  ([redis-server full-name (acl-name . sub-acls)]
    (let* ((allow-fun-name (mk-a 'add_ acl-name))
           (deny-fun-name (mk-a 'remove_ acl-name))
-          (sub-acls (sub-acls-to-allows redis-server (cons acl-name sub-acls)))
+          (sub-acls (sub-acls-to-allows redis-server full-name
+                     (cons acl-name sub-acls)))
           (get-allowed-fun-name (mk-a 'allowed_ acl-name))
           (get-is-fun-name (mk-a 'is_ acl-name))
           (get-denied-fun-name (mk-a 'denied_ acl-name)))
     (list
      `(defun ,acl-name (key id)
-       (deny? ',redis-server ',acl-name key id)
-       (orelse ,@sub-acls (read-denied-error ',acl-name key id)))
+       (deny? ',redis-server ',acl-name ',full-name key id)
+       (orelse ,@sub-acls (read-denied-error ',acl-name ',full-name key id)))
      `(defun ,get-allowed-fun-name (key)
-       (allowed ',redis-server ',acl-name key))
+       (allowed ',redis-server ',acl-name ',full-name key))
      `(defun ,get-is-fun-name (key)
-       (allowed ',redis-server ',acl-name key))
+       (allowed ',redis-server ',acl-name ',full-name key))
      `(defun ,get-denied-fun-name (key)
-       (denied ',redis-server ',acl-name key))
+       (denied ',redis-server ',acl-name ',full-name key))
      `(defun ,allow-fun-name (key id)
-       (allow ',redis-server ',acl-name key id))
+       (allow ',redis-server ',acl-name ',full-name key id))
      `(defun ,deny-fun-name (key id)
-       (deny ',redis-server ',acl-name key id))))))
+       (deny ',redis-server ',acl-name ',full-name key id))))))
 
  (defun generate-sub-acl-funs
-  ([redis () acc] acc)
-  ([redis (prop . props) acc]
-   (generate-sub-acl-funs redis props
-    (++ (acl-funs redis (cons prop props)) acc)))
-  ([redis single-prop acc] (when (is_atom single-prop))
-   (++ (acl-funs redis (cons single-prop ())) acc)))
+  ([redis full-name () acc] acc)
+  ([redis full-name (prop . props) acc]
+   (generate-sub-acl-funs redis full-name props
+    (++ (acl-funs redis full-name (cons prop props)) acc)))
+  ([redis full-name single-prop acc] (when (is_atom single-prop))
+   (++ (acl-funs redis full-name (cons single-prop ())) acc)))
 
 
- (defun generate-acl-funs (redis properties)
+ (defun generate-acl-funs (redis full-name properties)
   (: lists foldl
    (match-lambda
     ([property-group acc] (when (is_list property-group))
-     (++ (generate-sub-acl-funs redis (: lists reverse property-group) ()) acc))
+     (++ (generate-sub-acl-funs redis full-name
+      (: lists reverse property-group) ()) acc))
     ([property-group acc] (when (is_atom property-group))
-     (++ (generate-sub-acl-funs redis property-group ()) acc)))
+     (++ (generate-sub-acl-funs redis full-name property-group ()) acc)))
    '()
    properties))
 )
 
 (defsyntax mk-key
- ([base allow-deny permission-type]
-  (: eru er_key 'permission permission-type base allow-deny)))
+ ([full-name base allow-deny permission-type]
+  (: eru er_key 'racl full-name permission-type base allow-deny)))
 
 (defsyntax mk-allow-key
- ([base type]
-  (mk-key base 'allow type)))
+ ([full-name base type]
+  (mk-key full-name base 'allow type)))
 
 (defsyntax mk-deny-key
- ([base type]
-  (mk-key base 'deny type)))
+ ([full-name base type]
+  (mk-key full-name base 'deny type)))
 
 (defsyntax allowed
- ([redis-server permission-name key]
-  (: er smembers redis-server (mk-allow-key key permission-name))))
+ ([redis-server permission-name full-name key]
+  (: er smembers redis-server (mk-allow-key full-name key permission-name))))
 
 (defsyntax denied
- ([redis-server permission-name key]
-  (: er smembers redis-server (mk-deny-key key permission-name))))
+ ([redis-server permission-name full-name key]
+  (: er smembers redis-server (mk-deny-key full-name key permission-name))))
 
 (defsyntax check-permission
- ([redis-server permission-name allow-deny key requestor-id]
-  (: er sismember redis-server (mk-key key allow-deny permission-name) requestor-id)))
+ ([redis-server permission-name full-name allow-deny key requestor-id]
+  (: er sismember redis-server
+   (mk-key full-name key allow-deny permission-name) requestor-id)))
 
 (defsyntax allow?
- ([redis-server permission-name key id]
-  (check-permission redis-server permission-name 'allow key id)))
+ ([redis-server permission-name full-name key id]
+  (check-permission redis-server permission-name full-name 'allow key id)))
 
 (defsyntax read-denied-error
- ([permission key id] 'false))
+ ([permission full-name key id] 'false))
 
 (defsyntax deny?
- ([redis-server permission-name key id]
-  (let* ((denied (check-permission redis-server permission-name 'deny key id)))
+ ([redis-server permission-name full-name key id]
+  (let* ((denied (check-permission redis-server
+                  permission-name full-name 'deny key id)))
    (case denied
-    ('true (read-denied-error permission-name key id))
+    ('true (read-denied-error permission-name full-name key id))
     ('false 'ok)))))
 
 (defsyntax allow
- ([redis-server permission-name key id]
+ ([redis-server permission-name full-name key id]
   (progn
-   (: er srem redis-server (mk-deny-key key permission-name) id)
-   (: er sadd redis-server (mk-allow-key key permission-name) id))))
+   (: er srem redis-server (mk-deny-key full-name key permission-name) id)
+   (: er sadd redis-server (mk-allow-key full-name key permission-name) id))))
 
 (defsyntax deny
- ([redis-server permission-name key id]
+ ([redis-server permission-name full-name key id]
   (progn
-   (: er srem redis-server (mk-allow-key key permission-name) id)
-   (: er sadd redis-server (mk-deny-key key permission-name) id))))
+   (: er srem redis-server (mk-allow-key full-name key permission-name) id)
+   (: er sadd redis-server (mk-deny-key full-name key permission-name) id))))
 
 (defmacro defacl
- ([name redis-server-name properties modifiers custom-funs]
-  (let* ((acl-funs (generate-acl-funs redis-server-name properties)))
+ ([name redis-server-name full-name properties modifiers custom-funs]
+  (let* ((acl-funs (generate-acl-funs redis-server-name full-name properties)))
 ;   (: io format '"Found acl-funs: ~p~n~n" (list acl-funs))
    `(progn
      (defmodule ,name ,@modifiers)

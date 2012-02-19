@@ -2,6 +2,7 @@
 
 (defacl acl_userlevel
  redis_acl_userlevel
+ userlevel
  ((superadmin admin moderator important paid registered anonymous))
  ((export all))
  ())
