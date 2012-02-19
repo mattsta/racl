@@ -62,7 +62,7 @@
 
 (defsyntax mk-key
  ([base allow-deny permission-type]
-  (: eru er_key 'permission permission-type base allow-deny)))
+  (: eru er_key 'racl permission-type base allow-deny)))
 
 (defsyntax mk-allow-key
  ([base type]
