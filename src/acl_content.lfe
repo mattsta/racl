@@ -9,6 +9,7 @@
 
 (defacl acl_content  ; module name
  redis_acl_content   ; registered name of an er_pool to talk to redis
+ content  ; type of ACL so we can have ACL multitennancy
  ((owner delete merge write copy append downvote upvote flag read)) ; levels
  ((export all)) ; module stuff
  ()) ; additional functions you may want to bundle with your module
