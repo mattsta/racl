@@ -7,8 +7,8 @@
 ; think of "owner can (delete can (merge can (write can 
 ;           (copy can (append can (read))))))"
 
-(defacl acl_content  ; module name
- redis_acl_content   ; registered name of an er_pool to talk to redis
+(defacl racl_content  ; module name
+ redis_racl_content   ; registered name of an er_pool to talk to redis
  content             ; name used in redis keys to allow multiple racl namespaces
                      ; to exist on one redis server/cluster/global namespace
  ((owner delete merge write copy append downvote upvote flag read)) ; levels

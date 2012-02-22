@@ -1,7 +1,7 @@
 (include-file "include/racl.lfe")
 
-(defacl acl_userlevel
- redis_acl_userlevel
+(defacl racl_userlevel
+ redis_racl_userlevel
  userlevel
  ((superadmin admin moderator important paid registered anonymous))
  ((export all))
