@@ -19,9 +19,9 @@ racl_basic_commands_test_() ->
         % Add user
         ?_E(true,  racl_content:add_read(<<"bob">>, <<"12">>)),
         % Test permission
+        ?_E(true,  racl_content:is_read(<<"bob">>, <<"12">>)),
+        % Test permission
         ?_E(true,  racl_content:read(<<"bob">>, <<"12">>)),
-        % Check allowed users
-        ?_E([<<"12">>], racl_content:is_read(<<"bob">>)),
         % Check allowed users
         ?_E([<<"12">>], racl_content:allowed_read(<<"bob">>)),
         % Remove user

@@ -30,9 +30,10 @@
      `(defun ,acl-name (key id)
        (deny? ',redis-server ',acl-name ',full-name key id)
        (orelse ,@sub-acls (read-denied-error ',acl-name ',full-name key id)))
+     `(defun ,get-is-fun-name (key id) ; direct copy of above function
+       (deny? ',redis-server ',acl-name ',full-name key id)
+       (orelse ,@sub-acls (read-denied-error ',acl-name ',full-name key id)))
      `(defun ,get-allowed-fun-name (key)
-       (allowed ',redis-server ',acl-name ',full-name key))
-     `(defun ,get-is-fun-name (key)
        (allowed ',redis-server ',acl-name ',full-name key))
      `(defun ,get-denied-fun-name (key)
        (denied ',redis-server ',acl-name ',full-name key))
