@@ -28,6 +28,7 @@
           (get-denied-fun-name (mk-a 'denied_ acl-name)))
     (list
      `(defun ,acl-name (key id)
+;       (: io format '"Testing ~p with subs: ~p~n" (list ',acl-name ',sub-acls))
        (case (deny? ',redis-server ',acl-name ',full-name key id)
         ('ok (orelse
               ,@sub-acls
@@ -57,8 +58,7 @@
   (: lists foldl
    (match-lambda
     ([property-group acc] (when (is_list property-group))
-     (++ (generate-sub-acl-funs redis full-name
-      (: lists reverse property-group) ()) acc))
+     (++ (generate-sub-acl-funs redis full-name property-group ()) acc))
     ([property-group acc] (when (is_atom property-group))
      (++ (generate-sub-acl-funs redis full-name property-group ()) acc)))
    '()
