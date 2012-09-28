@@ -28,11 +28,13 @@
           (get-denied-fun-name (mk-a 'denied_ acl-name)))
     (list
      `(defun ,acl-name (key id)
-       (deny? ',redis-server ',acl-name ',full-name key id)
-       (orelse ,@sub-acls (read-denied-error ',acl-name ',full-name key id)))
-     `(defun ,get-is-fun-name (key id) ; direct copy of above function
-       (deny? ',redis-server ',acl-name ',full-name key id)
-       (orelse ,@sub-acls (read-denied-error ',acl-name ',full-name key id)))
+       (case (deny? ',redis-server ',acl-name ',full-name key id)
+        ('ok (orelse
+              ,@sub-acls
+              (read-denied-error ',acl-name ',full-name key id)))
+        ('false 'false)))
+     `(defun ,get-is-fun-name (key id) ; an explicit naming of (acl-name key id)
+       (,acl-name key id))
      `(defun ,get-allowed-fun-name (key)
        (allowed ',redis-server ',acl-name ',full-name key))
      `(defun ,get-denied-fun-name (key)
