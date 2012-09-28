@@ -3,6 +3,7 @@
 (defacl racl_userlevel
  redis_racl_userlevel
  userlevel
- ((superadmin admin moderator important paid registered anonymous))
+ ((superadmin admin staff moderator
+   lifetime serious important normal tiny paid registered anonymous))
  ((export all))
  ())
