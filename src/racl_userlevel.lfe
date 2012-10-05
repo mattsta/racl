@@ -4,6 +4,6 @@
  redis_racl_userlevel
  userlevel
  ((superadmin admin staff moderator
-   lifetime serious important normal tiny paid registered anonymous))
+   lifetime serious important normal tiny paid expired registered anonymous))
  ((export all))
  ())
