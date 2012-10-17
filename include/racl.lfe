@@ -21,6 +21,7 @@
   ([redis-server full-name (acl-name . sub-acls)]
    (let* ((allow-fun-name (mk-a 'add_ acl-name))
           (deny-fun-name (mk-a 'remove_ acl-name))
+          (remove-allow-fun-name (mk-a 'remove_allow_ acl-name))
           (sub-acls (sub-acls-to-allows redis-server full-name
                      (cons acl-name sub-acls)))
           (get-allowed-fun-name (mk-a 'allowed_ acl-name))
@@ -42,6 +43,8 @@
        (denied ',redis-server ',acl-name ',full-name key))
      `(defun ,allow-fun-name (key id)
        (allow ',redis-server ',acl-name ',full-name key id))
+     `(defun ,remove-allow-fun-name (key id)
+       (remove-allow ',redis-server ',acl-name ',full-name key id))
      `(defun ,deny-fun-name (key id)
        (deny ',redis-server ',acl-name ',full-name key id))))))
 
@@ -110,6 +113,11 @@
   (progn
    (: er srem redis-server (mk-deny-key full-name key permission-name) id)
    (: er sadd redis-server (mk-allow-key full-name key permission-name) id))))
+
+(defsyntax remove-allow
+ ([redis-server permission-name full-name key id]
+  (progn
+   (: er srem redis-server (mk-allow-key full-name key permission-name) id))))
 
 (defsyntax deny
  ([redis-server permission-name full-name key id]
